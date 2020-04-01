@@ -111,6 +111,8 @@ std::shared_ptr<grpc::ChannelCredentials>
 CliCredentials::GetChannelCredentials() const {
   if (FLAGS_channel_creds_type.compare("insecure") == 0) {
     return grpc::InsecureChannelCredentials();
+  } else if (FLAGS_channel_creds_type.compare("local") == 0) {
+    return grpc::experimental::LocalCredentials(grpc_local_connect_type.LOCAL_TCP);
   } else if (FLAGS_channel_creds_type.compare("ssl") == 0) {
     grpc::SslCredentialsOptions ssl_creds_options;
     // TODO(@Capstan): This won't affect Google Default Credentials using SSL.
@@ -213,7 +215,9 @@ const grpc::string CliCredentials::GetCredentialUsage() const {
          "    --ssl_target             ; Set server host for ssl validation\n"
          "    --ssl_client_cert        ; Client cert for ssl\n"
          "    --ssl_client_key         ; Client private key for ssl\n"
-         "    --channel_creds_type     ; Set to insecure, ssl, gdc, or alts\n"
+         "    --channel_creds_type     ; Set to insecure, local, ssl, gdc, "
+         " or alts\n"
+         "    --local_connection_type  ; Set to local_tcp, uds\n"
          "    --call_creds             ; Set to none, or"
          " access_token=<token>\n";
 }
